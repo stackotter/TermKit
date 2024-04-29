@@ -210,7 +210,7 @@ class CursesDriver: ConsoleDriver {
         #if os(Linux)
         let status = get_wch (&result)
         #else
-        let status = get_wch_fn (&result)
+        let status = get_wch_fn! (&result)
         #endif
         if status == ERR {
             return
@@ -251,7 +251,7 @@ class CursesDriver: ConsoleDriver {
             #if os(Linux)
             let status2 = get_wch (&result)
             #else
-            let status2 = get_wch_fn (&result)
+            let status2 = get_wch_fn! (&result)
             #endif
             timeout (-1)
             
