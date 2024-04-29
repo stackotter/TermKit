@@ -7,6 +7,13 @@
 
 import Foundation
 
+#if os(Linux)
+func wcwidth<T>(_ t: T) -> Int {
+    // TODO: Make this actually correct on Linux
+    1
+}
+#endif
+
 /**
  * The drawing context tracks the cursor position, and attribute in use
  * during the View's draw method, it enforced clipping on the view bounds.
@@ -131,7 +138,12 @@ public class Painter {
         }
         // TODO: optimize, we can handle the visibility for rows before and later just do
         // columns rather than testing both.
-        let len = Int32 (wcwidth(wchar_t (bitPattern: rune.value)))
+        #if os(Linux)
+        let value = Int32(rune.value)
+        #else
+        let value = rune.value
+        #endif
+        let len = Int32 (wcwidth(wchar_t (bitPattern: value)))
         let npos = pos.x + Int (len)
 
         if npos > maxWidth {

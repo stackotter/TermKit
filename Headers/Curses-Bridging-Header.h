@@ -10,6 +10,13 @@
 #define Curses_Bridging_Header_h
 #include <wchar.h>
 
+// #define NCURSES_WIDECHAR 1
+// #include <ncursesw/curses.h>
+// #include <cursesw.h>
+
+#define _XOPEN_SOURCE_EXTENDED 1
+#include <curses.h>
+
 typedef struct
 {
     int      attr;

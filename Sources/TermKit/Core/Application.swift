@@ -7,7 +7,8 @@
 //
 
 import Foundation
-import Darwin.ncurses
+
+#if canImport(os)
 import os
 
 var fd: Int32 = -1
@@ -28,6 +29,12 @@ func log (_ s: String)
         return write(fd, dataBytes.baseAddress, data.count)
     }
 }
+#else
+func log (_ s: String)
+{
+    // print(s)
+}
+#endif
 
 class SizeError: Error {
 }

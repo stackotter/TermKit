@@ -7,6 +7,8 @@
 // TODO: implement the updateDisplay like from the NSView/UIView versions of SwiftTerm,
 // so that the display is only updated every N ms, and not on every data read.
 //
+
+#if canImport(SwiftTerm)
 import Foundation
 import SwiftTerm
 
@@ -460,3 +462,4 @@ public class LocalProcessTerminalView: TerminalView, LocalProcessDelegate, Termi
     
 
 }
+#endif

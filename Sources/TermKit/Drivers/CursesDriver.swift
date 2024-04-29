@@ -26,7 +26,7 @@ class CursesDriver: ConsoleDriver {
     var crow: Int32 = 0
     var needMove: Bool = false
     
-    var cursesWindow: OpaquePointer!
+    var cursesWindow: UnsafeMutablePointer<WINDOW>!
     
     
     // Swift ncurses does not bind these
@@ -70,10 +70,10 @@ class CursesDriver: ConsoleDriver {
     var mouseEvents: mmask_t
 
     
-    typealias get_wch_def = @convention(c) (UnsafeMutablePointer<Int32>) -> Int
+    // typealias get_wch_def = @convention(c) (UnsafeMutablePointer<Int32>) -> Int
     
     // Dynamically loaded definitions, because Darwin.ncurses does not bring these
-    var get_wch_fn: get_wch_def? = nil
+    // var get_wch_fn: get_wch_def? = nil
     
 
     override init ()
@@ -93,7 +93,7 @@ class CursesDriver: ConsoleDriver {
         keypad(cursesWindow, true)
     
         mouseEvents = mousemask (mmask_t (UInt (cursesAllEvents | cursesReportMousePosition)), &oldMouseEvents)
-        if (mouseEvents & UInt (cursesReportMousePosition)) != 0 {
+        if (mouseEvents & mmask_t (cursesReportMousePosition)) != 0 {
             startReportingMouseMoves()
         }
         start_color()
@@ -107,11 +107,9 @@ class CursesDriver: ConsoleDriver {
         
         clear ();
 
-        let rtld_default = UnsafeMutableRawPointer(bitPattern: -2)
-
-        // Fetch the pointers to get_wch and add_wch as the NCurses binding in Swift is missing them
-        let get_wch_ptr = dlsym (rtld_default, "get_wch")
-        get_wch_fn = unsafeBitCast(get_wch_ptr, to: get_wch_def.self)
+        // // Fetch the pointers to get_wch and add_wch as the NCurses binding in Swift is missing them
+        // let get_wch_ptr = dlsym (rtld_default, "get_wch")
+        // get_wch_fn = unsafeBitCast(get_wch_ptr, to: get_wch_def.self)
         
         selectColors()
     }
@@ -201,7 +199,7 @@ class CursesDriver: ConsoleDriver {
     func inputReadCallback (input: FileHandle)
     {
         var result: Int32 = 0
-        let status = get_wch_fn! (&result)
+        let status = get_wch (&result)
         if status == ERR {
             return
         }
@@ -238,7 +236,7 @@ class CursesDriver: ConsoleDriver {
         // Special handling for ESC, we want to try to catch ESC+letter to simulate alt-letter, as well as alt-FKey
         if result == 27 {
             timeout (200)
-            let status2 = get_wch_fn! (&result)
+            let status2 = get_wch (&result)
             timeout (-1)
             
             let isControl = result >= 0 && result < 32
@@ -545,7 +543,7 @@ class CursesDriver: ConsoleDriver {
     
     func stopReportingMouseMoves ()
     {
-        if (mouseEvents & UInt(cursesReportMousePosition)) != 0 {
+        if (mouseEvents & mmask_t(cursesReportMousePosition)) != 0 {
             print ("\u{1b}[?1003l")
             fflush(stdout)
         }
@@ -553,7 +551,7 @@ class CursesDriver: ConsoleDriver {
     
     func startReportingMouseMoves ()
     {
-        if (mouseEvents & UInt (cursesReportMousePosition)) != 0 {
+        if (mouseEvents & mmask_t(cursesReportMousePosition)) != 0 {
             print ("\u{1b}[?1003h")
             fflush (stdout)
         }

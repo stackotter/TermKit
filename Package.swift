@@ -29,7 +29,10 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "TermKit",
-            dependencies: ["Curses", "OpenCombine", "TextBufferKit", "SwiftTerm"]),
+            dependencies: [
+                "Curses", "OpenCombine", "TextBufferKit",
+                .product(name: "SwiftTerm", package: "SwiftTerm", condition: .when(platforms: [.iOS, .macOS, .tvOS, .watchOS]))
+            ]),
         .systemLibrary(
             name: "Curses"), // , pkgConfig: "/tmp/ncursesw.pc"),
         .target(
