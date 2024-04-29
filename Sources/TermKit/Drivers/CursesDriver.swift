@@ -115,6 +115,7 @@ class CursesDriver: ConsoleDriver {
 
         // Fetch the pointers to get_wch and add_wch as the NCurses binding in Swift is missing them
         #if !os(Linux)
+        let rtld_default = UnsafeMutableRawPointer(bitPattern: -2)
         let get_wch_ptr = dlsym (rtld_default, "get_wch")
         get_wch_fn = unsafeBitCast(get_wch_ptr, to: get_wch_def.self)
         #endif
