@@ -558,6 +558,8 @@ class CursesDriver: ConsoleDriver {
     public override func end ()
     {
         endwin()
+        print("Ended win")
+        stopReportingMouseMoves()
     }
     
     func stopReportingMouseMoves ()
