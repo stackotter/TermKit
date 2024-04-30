@@ -7,7 +7,14 @@
 //
 
 import Foundation
+
 import Curses
+
+#if os(Linux)
+    typealias WindowPointer = UnsafeMutablePointer<WINDOW>
+#else
+    typealias WindowPointer = OpaquePointer
+#endif
 
 /// Turn this on to debug rendering problems, makes screen updates sync
 var sync: Bool = false
@@ -26,13 +33,8 @@ class CursesDriver: ConsoleDriver {
     var crow: Int32 = 0
     var needMove: Bool = false
     
-    #if os(Linux)
-    var cursesWindow: UnsafeMutablePointer<WINDOW>!
-    #else
-    var cursesWindow: OpaquePointer!
-    #endif
-    
-    
+    var cursesWindow: WindowPointer!
+
     // Swift ncurses does not bind these
     let A_NORMAL    : Int32 = 0x0;
     let A_STANDOUT  : Int32 = 0x10000;

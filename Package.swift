@@ -30,11 +30,16 @@ let package = Package(
         .target(
             name: "TermKit",
             dependencies: [
-                "Curses", "OpenCombine", "TextBufferKit",
-                .product(name: "SwiftTerm", package: "SwiftTerm", condition: .when(platforms: [.iOS, .macOS, .tvOS, .watchOS]))
+                "OpenCombine",
+                "TextBufferKit",
+                .product(name: "SwiftTerm", package: "SwiftTerm", condition: .when(platforms: [.iOS, .macOS, .tvOS, .watchOS, .macCatalyst])),
+                .target(name: "DarwinCurses", condition: .when(platforms: [.iOS, .macOS, .tvOS, .watchOS, .macCatalyst])),
+                .target(name: "LinuxCurses", condition: .when(platforms: [.linux]))
             ]),
         .systemLibrary(
-            name: "Curses"), // , pkgConfig: "/tmp/ncursesw.pc"),
+            name: "DarwinCurses"),
+        .systemLibrary(
+            name: "LinuxCurses"),
         .target(
             name: "Example",
             dependencies: ["TermKit", "SwiftTerm"]),
